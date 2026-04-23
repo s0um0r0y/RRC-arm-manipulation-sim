@@ -20,13 +20,6 @@
 1. Understand PPO and actor–critic training
 2. Train a PPO policy to predict stiffness values (K)
 3. Integrate RL policy with the QP controller
-- Week 6 – Rewards, Stability & Logging
-1. Implement DAVIL reward terms (tracking, infeasibility penalty, EMA smoothness)
-2. Add logging, checkpoints, and seed control
-3. Train stable policies on simple object cases
-- Week 7 – Full DAVIL Training
-1. Train across multiple objects and masses
-2. Evaluate tracking performance over many trajectories
 
 ## Run instructions
 ```bash
