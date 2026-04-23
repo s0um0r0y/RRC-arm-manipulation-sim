@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "RRC_arm_manipulation_sim"
+version = "0.1.0"
+description = "Robotics Manipulation Lab using MuJoCo, CVXPY, and PPO"
+readme = "README.md"
+requires-python = "==3.12.*"
+authors = [
+    { name = "Soumo Roy" }
+]
+dependencies = [
+    "numpy>=1.26.0",
+    "scipy>=1.11.0",
+    "torch>=2.2.0",
+    "mujoco>=3.1.0",
+    "cvxpy>=1.4.0",
+    "stable-baselines3>=2.2.0",
+    "gymnasium>=0.29.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.3.0", # Fast linter/formatter to keep code clean
+]
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "envs",
+    "controllers",
+    "utils",
+    "rl"
+]
