@@ -27,3 +27,13 @@
 - Week 7 – Full DAVIL Training
 1. Train across multiple objects and masses
 2. Evaluate tracking performance over many trajectories
+
+## Run instructions
+```bash
+uv sync
+
+# to run the Franka setup
+uv run main.py
+```
+
+![image](./assests/franka_setup.png)
