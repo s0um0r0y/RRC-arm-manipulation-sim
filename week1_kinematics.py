@@ -27,4 +27,23 @@ def simulate_visualize(xml_path: str, site_name: str = "attachment_site", durati
             step_start = time.time()
             
             # joints 0 (base), 3 (elbow) and 5 (Wrist)
+            data.qpos[0] = q_init[0] + 0.5 * np.sin(2.0 * t)
+            data.qpos[3] = q_init[3] + 0.3 * np.sin(2.5 * t)
+            data.qpos[5] = q_init[5] + 0.4 * np.sin(3.0 * t)
+            
+            # Forward kinematics
+            mujoco.mj_kinematics(model, data)
+            
+            # extract task space (end-effector)
+            pos, _ = get_ee_pose(model, data)
+            ee_trajectory.append(pos)
+            times.append(t)
+            viewer.sync()
+            
+            # run at approx 60fps for 
+            time_until_next_step = (1.0 / 60.0) - (time.time() - step_start)
+            if time_until_next_step > 0:
+                time.sleep(time_until_next_step)
+                
+    plot_trajectory(np.array(ee_trajectory))            
     
