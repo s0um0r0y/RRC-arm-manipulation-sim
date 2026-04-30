@@ -47,3 +47,22 @@ def simulate_visualize(xml_path: str, site_name: str = "attachment_site", durati
                 
     plot_trajectory(np.array(ee_trajectory))            
     
+def plot_trajectory(trajectory: np.ndarray):
+    fig = plt.figure(figsize=(8, 6))
+    ax = fig.add_subplot(111, projection='3d')
+    
+    x = trajectory[:, 0]
+    y = trajectory[:, 1]
+    z = trajectory[:, 2]
+    
+    ax.plot(x, y, z, label='EE Path', color='b', linewidth=2)
+    ax.scatter(x[0], y[0], z[0], color='g', s=100, label='Start')
+    ax.scatter(x[-1], y[-1], z[-1], color='r', s=100, label='End')
+    
+    ax.set_title("End-Effector 3D Trajectory (Forward Kinematics)")
+    ax.set_xlabel("X Position (m)")
+    ax.set_ylabel("Y Position (m)")
+    ax.set_zlabel("Z Position (m)")
+    ax.legend()
+    plt.show()
+    
