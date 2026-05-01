@@ -35,7 +35,7 @@ def simulate_visualize(xml_path: str, site_name: str = "attachment_site", durati
             mujoco.mj_kinematics(model, data)
             
             # extract task space (end-effector)
-            pos, _ = get_ee_pose(model, data)
+            pos, _ = get_ee_pose(model, data, site_name)
             ee_trajectory.append(pos)
             times.append(t)
             viewer.sync()
