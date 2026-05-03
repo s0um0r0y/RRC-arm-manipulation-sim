@@ -68,4 +68,4 @@ def plot_trajectory(trajectory: np.ndarray):
     
 if __name__ == "__main__":
     panda_xml = "third_party/mujoco_menagerie/franka_emika_panda/scene.xml"
-    simulate_visualize(panda_xml, site_name="attachment_site", duration=6.0)
+    simulate_visualize(panda_xml, site_name="hand", duration=6.0)
