@@ -14,13 +14,13 @@ def get_ee_pose(model: mujoco.MjModel, data: mujoco.MjData, frame_name: str) -> 
         pos: 3D position vector (x, y, z) of the site.
         mat: 3x3 rotation matrix representing the site's orientation.
     """
-    site_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_SITE, frame_name)
-    if site_id == -1:
-        return data.site_xpos[site_id].copy(), data.site_xmat[site_id].reshape(3, 3).copy()
-    
     body_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, frame_name)
     if body_id != -1:
         return data.xpos[body_id].copy(), data.xmat[body_id].reshape(3, 3).copy()
+        
+    site_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_SITE, frame_name)
+    if site_id != -1:
+        return data.site_xpos[site_id].copy(), data.site_xmat[site_id].reshape(3, 3).copy()
         
     raise ValueError(f"Frame '{frame_name}' not found as a Site or Body. Please check your XML.")
     
@@ -50,13 +50,15 @@ def get_jacobian(model: mujoco.MjModel, data: mujoco.MjData, frame_name: str) ->
     jacr = np.zeros((3, model.nv))
     
     # calculate the jacobian at the current state
-    if site_id != 1:
-        mujoco.mj_jacSite(model, data, jacp, jacr, site_id)
-        return np.vstack(jacp, jacr)
-    
-    body_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjtObj.mjOBJ_BODY, frame_name)
-    if body_id != 1:
+    body_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, frame_name)
+    if body_id != -1:
         mujoco.mj_jacBody(model, data, jacp, jacr, body_id)
+        return np.vstack((jacp, jacr))
+        
+    # 2. Try Site
+    site_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_SITE, frame_name)
+    if site_id != -1:
+        mujoco.mj_jacSite(model, data, jacp, jacr, site_id)
         return np.vstack((jacp, jacr))
     
     raise ValueError(f"Frame '{frame_name}' not found as a Site or Body. Please check your XML.")
