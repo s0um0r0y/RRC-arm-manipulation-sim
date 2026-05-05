@@ -30,3 +30,8 @@ uv run main.py
 ```
 
 ![image](./assests/franka_setup.png)
+
+## Week 1
+- Forward Kinematics and trajectory pic
+
+![graph](./assests/graph.png)
