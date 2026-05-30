@@ -26,7 +26,7 @@ def quintic_trajectory(t: float, T: float, p0:np.ndarray, pf:np.ndarray) -> tupl
     
     pos = p0 + (pf-p0) * c_pos
     vel = (pf-p0) * c_vel
-    acc = (pf-p0) * c_vel
+    acc = (pf-p0) * c_acc
     
     return pos, vel, acc
 
