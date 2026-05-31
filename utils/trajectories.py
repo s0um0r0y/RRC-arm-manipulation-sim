@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.spatial.transform import Rotation as R
+from scipy.spatial.transform import Rotation as R, rotation
 from scipy.spatial.transform import Slerp
 
 def quintic_trajectory(t: float, T: float, p0:np.ndarray, pf:np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -31,4 +31,27 @@ def quintic_trajectory(t: float, T: float, p0:np.ndarray, pf:np.ndarray) -> tupl
     return pos, vel, acc
 
 def slerp_trajectories(t: float, T: float, R0: np.ndarray, Rf: np.ndarray) -> np.ndarray:
-    pass
+    """Computes Spherical Linear Interpolation (SLERP) between two rotation matrices
+
+    Args:
+        t (float): current time
+        T (float): total duration of the trajectory
+        R0 (np.ndarray): intial rotation matrix
+        Rf (np.ndarray): final rotation matrix
+
+    Returns:
+        Rt: interpolated matrix at time t
+    """
+    # bound time between 0 and T
+    t = np.clip(t, 0.0, T)
+    s = t/T
+    
+    # scipy rotation objects
+    rotations = R.from_matrix([R0, Rf])
+    times = [0.0, 1.0]
+    
+    slerp = Slerp(times, rotations)
+    
+    # get the interpolated rotation at normalized time 's' and convert back to matrix
+    interpolated_rot = slerp([s])[0]
+    return interpolated_rot.as_matrix()
