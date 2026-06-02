@@ -35,3 +35,8 @@ uv run main.py
 - Forward Kinematics and trajectory pic
 
 ![graph](./assests/graph.png)
+
+## Week 2
+- Trajectory plot from test trajectories
+
+![graph](./assests/trajectory_profiles.png)
