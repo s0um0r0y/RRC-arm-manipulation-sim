@@ -33,10 +33,15 @@ uv run main.py
 
 ## Week 1
 - Forward Kinematics and trajectory pic
+```
+uv run week1_kinematics.py
+```
 
 ![graph](./assests/graph.png)
 
 ## Week 2
 - Trajectory plot from test trajectories
-
+```
+uv run week2_test_traj.py
+```
 ![graph](./assests/trajectory_profiles.png)
