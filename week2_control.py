@@ -7,6 +7,7 @@ import mujoco.viewer
 from utils.kinematics import get_ee_pose, get_jacobian
 from utils.trajectories import quintic_trajectory, slerp_trajectories
 from controllers.pd_controller import TaskSpacePDController
+from scipy.spatial.transform import Rotation as R
 
 def run_pd_control(xml_path: str, frame_name: str = "hand"):
     model = mujoco.MjModel.from_xml_path(xml_path)
@@ -26,6 +27,27 @@ def run_pd_control(xml_path: str, frame_name: str = "hand"):
     
     # Forward step once to initialize the kinematic tree
     mujoco.mj_step(model, data)
+    
+    # Trajectory parameters
+    duration = 5.0
+    pos_start, mat_start = get_ee_pose(model, data, frame_name)
+    
+    # Move 20cm forward in X, 15cm left in Y, and stay at same Z
+    pos_goal = pos_start + np.array([0.2, 0.15, 0.0])
+    
+    # rotate 45 degree around the Z-axis
+    rot_offset = R.from_euler('z', 45, degree=True).as_matrix()
+    mat_goal = rot_offset @ mat_start
+    
+    print(f"Starting PD Control. Tracking trajectory for {duration} seconds...")
+    
+    with mujoco.viewer.launch_passive(model, data) as viewer:
+        start_time = time.time()
+        
+        # might need to change the duration later
+        while viewer.is_running() and (time.time() - start_time) < (duration + 2.0):
+            
+            
 
 if __name__ == "__main__":
     panda_xml = "third_party/mujoco_menagerie/franka_emika_panda/scene.xml"
