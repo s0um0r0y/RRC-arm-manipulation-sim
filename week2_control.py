@@ -46,7 +46,17 @@ def run_pd_control(xml_path: str, frame_name: str = "hand"):
         
         # might need to change the duration later
         while viewer.is_running() and (time.time() - start_time) < (duration + 2.0):
+            t = time.time() - start_time
+            step_start = time.time()
             
+            # get current state
+            pos_curr, mat_curr = get_ee_pose(model, data, frame_name)
+            J = get_jacobian(model, data, frame_name)
+            
+            # end effector spatial velocity (v = J * dq)
+            vel_curr = J @ data.qvel
+            
+             
             
 
 if __name__ == "__main__":
