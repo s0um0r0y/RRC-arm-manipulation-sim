@@ -56,7 +56,32 @@ def run_pd_control(xml_path: str, frame_name: str = "hand"):
             # end effector spatial velocity (v = J * dq)
             vel_curr = J @ data.qvel
             
-             
+            # desired state from trajectory generators
+            pos_des, vel_des_pos, _ = quintic_trajectory(t, duration, pos_start, pos_goal)
+            mat_des = slerp_trajectories(t, duration, mat_start, mat_goal)
+            
+            # combine desired velocities
+            vel_des = np.zeros(6)
+            vel_des[:3] = vel_des_pos
+            
+            # compute torques
+            # pass data.qfrc_bias (gravity + Coriolis) to keep the arm from falling 
+            torques = controller.compute_torques(
+                J, pos_curr, mat_curr, vel_curr, 
+                pos_des, mat_des, vel_des, 
+                data.qfrc_bias
+            )
+            
+            # We only apply torques to the first 7 actuators (the arm). The gripper actuators stay at 0.
+            data.ctrl[:7] = torques[:7]
+            
+            mujoco.mj_step(model, data)
+            viewer.sync()
+            
+            # timesync with MuJoCo timstep
+            time_until_next = model.opt.timestep - (time.time() - step_start)
+            if time_until_next > 0:
+                time.sleep(time_until_next)
             
 
 if __name__ == "__main__":
