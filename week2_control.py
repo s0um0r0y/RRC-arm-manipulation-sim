@@ -36,7 +36,7 @@ def run_pd_control(xml_path: str, frame_name: str = "hand"):
     pos_goal = pos_start + np.array([0.2, 0.15, 0.0])
     
     # rotate 45 degree around the Z-axis
-    rot_offset = R.from_euler('z', 45, degree=True).as_matrix()
+    rot_offset = R.from_euler('z', 45, degrees=True).as_matrix()
     mat_goal = rot_offset @ mat_start
     
     print(f"Starting PD Control. Tracking trajectory for {duration} seconds...")
