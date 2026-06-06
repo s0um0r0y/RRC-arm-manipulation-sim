@@ -45,9 +45,12 @@ def run_pd_control(xml_path: str, frame_name: str = "hand"):
         start_time = time.time()
         
         # might need to change the duration later
-        while viewer.is_running() and (time.time() - start_time) < (duration + 2.0):
-            t = time.time() - start_time
+        while viewer.is_running():
             step_start = time.time()
+            elapsed_time = time.time() - start_time
+            
+            # clamp the trajectory time
+            t  = min(elapsed_time, duration) 
             
             # get current state
             pos_curr, mat_curr = get_ee_pose(model, data, frame_name)
@@ -83,7 +86,6 @@ def run_pd_control(xml_path: str, frame_name: str = "hand"):
             if time_until_next > 0:
                 time.sleep(time_until_next)
             
-
 if __name__ == "__main__":
     panda_xml = "third_party/mujoco_menagerie/franka_emika_panda/scene.xml"
     run_pd_control(panda_xml, frame_name="hand")
