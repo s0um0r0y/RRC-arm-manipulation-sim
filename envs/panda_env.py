@@ -48,7 +48,15 @@ class FrankaPandaEnv(gym.Env):
         
     def _get_obs(self) -> np.ndarray:
         """Extracts the state observation from the simulator"""
-        pass
+        # 7 joints of the arm
+        qpos = self.data.qpos[:7].copy()
+        qvel = self.data.qvel[:7].copy()
+        
+        # get end effector cartesian position
+        ee_pos, _ = get_ee_pose(self.model, self.data, self.frame_name)
+        
+        # Concatenate into a single flat observation vector
+        return np.concatenate([qpos, qvel, ee_pos]).astype(np.float32)
     
     def reset(self, seed=None, options=None) -> tuple[np.ndarray, dict]:
         pass
