@@ -59,7 +59,22 @@ class FrankaPandaEnv(gym.Env):
         return np.concatenate([qpos, qvel, ee_pos]).astype(np.float32)
     
     def reset(self, seed=None, options=None) -> tuple[np.ndarray, dict]:
-        pass
+        super().reset(seed=seed)
+        
+        # reset the physics simulation data structure
+        mujoco.mj_resetData(self.model, self.data)
+        
+        # adding initialization for robustness
+        noise = self.np_random.uniform(low=-0.05, high=0.05, size=(7,))
+        self.data.qpos[:7] = self.q_home + noise
+        self.data.qvel[:7] = 0.0  # Start from a complete stop
+        
+        # forward kinematics to update the spatial positions after after modifying qpos
+        mujoco.mj_forward(self.model, self.data)
+        observation = self._get_obs()
+        info = {}
+        
+        return observation, info
     
     def step(self, action: np.ndarray) -> tuple[np.ndarray, float, bool, bool, dict]:
         """Advances the simulation by one environment step given an action"""
