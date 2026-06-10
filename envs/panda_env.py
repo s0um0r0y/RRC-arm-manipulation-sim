@@ -78,5 +78,28 @@ class FrankaPandaEnv(gym.Env):
     
     def step(self, action: np.ndarray) -> tuple[np.ndarray, float, bool, bool, dict]:
         """Advances the simulation by one environment step given an action"""
-        pass
+        # Clip actions to ensure they stay within physical torque bounds
+        torque_action = np.clip(action, self.action_space.low, self.action_space.high)
         
+        # We only command the first 7 joints; the gripper fingers are kept passive (0 torque)
+        self.data.ctrl[:7] = torque_action
+        self.data.ctrl[7:] = 0.0
+        
+        # MuJoCo internal timestep is typically 0.002s (500Hz). 
+        # Running 10 substeps gives an env step of 0.02s (50Hz).
+        substeps = 10
+        for _ in range(substeps):
+            mujoco.mj_step(self.model, self.data)
+            
+        # Get updated observation
+        observation = self._get_obs()
+        
+        reward = 0.0
+        terminated = False
+        truncated = False
+        
+        info = {
+            "ee_position": observation[-3:].tolist() # Track EE pos for debugging
+        }
+        
+        return observation, reward, terminated, truncated, info
