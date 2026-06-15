@@ -45,3 +45,9 @@ uv run week1_kinematics.py
 uv run week2_test_traj.py
 ```
 ![graph](./assests/trajectory_profiles.png)
+
+### Week 3
+- Implemented observations and resets
+```
+uv run week3_test_env.py
+```
