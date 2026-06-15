@@ -51,3 +51,14 @@ uv run week2_test_traj.py
 ```
 uv run week3_test_env.py
 ```
+
+### Week 4
+## Math (Inverse Dynamics + Optimization)
+1. Desired Task-Space Acceleration: 
+$$\ddot{x}_{cmd} = K_p(x_{des} - x_{curr}) + K_d(\dot{x}_{des} - \dot{x}_{curr})$$
+
+2. Objective Function:
+- ask-space acceleration ($J\ddot{q}$) to match the desired one ($\ddot{x}_{cmd}$)
+
+$$\min_{\ddot{q}} || J\ddot{q} - \ddot{x}_{cmd} ||^2 + \lambda ||\ddot{q}||^2$$
+
