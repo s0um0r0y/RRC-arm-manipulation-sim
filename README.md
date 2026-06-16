@@ -56,6 +56,7 @@ uv run week3_test_env.py
 ## Math (Inverse Dynamics + Optimization)
 1. Desired Task-Space Acceleration: 
 - PD law to calculate the acceleration
+
 $$\ddot{x}_{cmd} = K_p(x_{des} - x_{curr}) + K_d(\dot{x}_{des} - \dot{x}_{curr})$$
 
 2. Objective Function:
