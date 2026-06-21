@@ -31,3 +31,28 @@ def run_qp_control(xml_path: str, frame_name: str = "hand"):
     
     mat_goal = (R.from_euler('x', 30, degrees=True) * R.from_matrix(mat_start)).as_matrix()
     print("Starting QP Optimization Controller...")
+    
+    mass_matrix = np.zeros((model.nv, model.nv))
+    
+    with mujoco.viewer.launch_passive(model, data) as viewer:
+        start_time = time.time()
+        
+        while viewer.is_running():
+            step_start = time.time()
+            t = min(time.time() - start_time, duration)
+            
+            # state extraction
+            pos_curr, mat_curr = get_ee_pose(model, data, frame_name)
+            
+            # We slice [:7] to only grab the Jacobian components for the arm, ignoring the gripper fingers
+            J = get_jacobian(model, data, frame_name)[:, :7]
+            vel_curr = J @ data.qvel[:7]
+            
+            # extract mass matrix (M) for inverse dynamics
+            mujoco.mj_fullM(model, mass_matrix, data.qM)
+            M_arm = mass_matrix[:7, :7]
+            
+            # extract gravity
+            bias_arm = data.qfrc_bias[:7]
+            
+            
