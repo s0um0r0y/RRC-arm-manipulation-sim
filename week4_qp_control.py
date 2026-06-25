@@ -3,9 +3,8 @@ import numpy as np
 import mujoco
 import mujoco.viewer
 
-from mujoco.mjx.tutorial import duration
 from utils.kinematics import get_ee_pose, get_jacobian
-from utils.trajectories import quintic_trajectory, slerp_trajectory
+from utils.trajectories import quintic_trajectory, slerp_trajectories
 from controllers.qp_controller import QPImpedanceController
 from scipy.spatial.transform import Rotation as R
 
@@ -55,4 +54,27 @@ def run_qp_control(xml_path: str, frame_name: str = "hand"):
             # extract gravity
             bias_arm = data.qfrc_bias[:7]
             
+            # desired state
+            pos_des, vel_des_pos, _ = quintic_trajectory(t, duration, pos_start, pos_goal)
+            mat_des = slerp_trajectories(t, duration, mat_start, mat_goal)
+            vel_des = np.zeros(6)
+            vel_des[:3] = vel_des_pos
             
+            torques = controller.compute_torques(
+                J, M_arm, bias_arm,
+                pos_curr, mat_curr, vel_curr,
+                pos_des, mat_des, vel_des
+            )
+            
+            data.ctrl[:7] = torques
+            
+            mujoco.mj_step(model, data)
+            viewer.sync()
+            
+            elapsed = time.time() - step_start
+            if elapsed < model.opt.timestep:
+                time.sleep(model.opt.timestep - elapsed)
+
+if __name__ == "__main__":
+    panda_xml = "third_party/mujoco_menagerie/franka_emika_panda/scene.xml"
+    run_qp_control(panda_xml)                
