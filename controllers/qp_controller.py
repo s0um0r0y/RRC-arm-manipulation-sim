@@ -12,7 +12,7 @@ class QPImpedanceController:
         self.Kd_ori = Kd_ori
         
         # CVXPY setup
-        self.ddq = cp,cp.Variable(self.nv)
+        self.ddq = cp.Variable(self.nv)
         self.J_param = cp.Parameter((6, self.nv))
         self.xdd_cmd_param = cp.Parameter(6)
         
