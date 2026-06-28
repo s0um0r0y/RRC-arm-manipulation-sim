@@ -73,3 +73,5 @@ $$\ddot{q}_{min} \le \ddot{q} \le \ddot{q}_{max}$$
 - Once CVXPY finds the optimal $\ddot{q}^*$, we use the rigid body dynamics equation to calculate the exact motor torques required, utilizing the Mass matrix $M(q)$ and gravity/Coriolis bias $h(q, \dot{q})$
 
 $$\tau = M(q)\ddot{q}^* + h(q, \dot{q})$$
+
+- code for this is in `controller/qp_controller.py`
